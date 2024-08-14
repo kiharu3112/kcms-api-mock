@@ -1,7 +1,5 @@
 import { serve } from "@hono/node-server";
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { z } from "zod";
 import { teamHandler } from "./team/main";
 const app = new Hono();
 
