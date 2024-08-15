@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { teamHandler } from "./team/main";
+import { matchHandler } from "./match/main";
 const app = new Hono();
 
 type Team = {
@@ -11,15 +12,27 @@ type Team = {
   category: "Elementary" | "Primary";
   entry: boolean;
 };
-type Match = {
+export type Match = {
   id: string;
-  teamId: string;
-  score: number;
-  rank: number;
+  matchCode: string;
+  team1Id: string;
+  team2Id: string;
+  runResults: {
+    id: string;
+    teamId: string;
+    points: number;
+    goalTimeSeconds: number;
+    finishState: "finished" | "retired";
+  }[]
+  matchType: "pre" | "main";
+  courseIndex: number;
 };
 type Data = {
   team: Team[];
-  match: Match[];
+  matches: {
+    pre: Match[];
+    main: Match[];
+  };
 };
 export const data: Data = {
   team: [
@@ -29,7 +42,15 @@ export const data: Data = {
       members: ["木下竹千代", "織田幸村"],
       isMultiWalk: false,
       category: "Elementary",
-      entry: false,
+      entry: true,
+    },
+    {
+      id: "z7pji1obh5",
+      teamName: "obsidian",
+      members: ["aa"],
+      isMultiWalk: true,
+      category: "Elementary",
+      entry: true,
     },
   ],
   match: [],
@@ -40,6 +61,7 @@ app.get("/", (c) => {
 });
 
 app.route("/team", teamHandler);
+app.route("/match", matchHandler);
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);
